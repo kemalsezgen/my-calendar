@@ -1,5 +1,6 @@
-package com.mycalendar.myCalendar.model;
+package com.mycalendar.myCalendar.model.entity;
 
+import com.mycalendar.myCalendar.model.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "tasks")
 public class Task {
 
     // Auto-incremented primary key for the Task entity
@@ -30,8 +32,7 @@ public class Task {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Subtask> subtasks;
 
-    // Completion status of the task
-    private boolean completed;
+    private TaskStatus status;
 
     // Start date of the task
     private String startDate;
