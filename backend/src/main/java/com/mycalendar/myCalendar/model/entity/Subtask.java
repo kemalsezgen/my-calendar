@@ -1,5 +1,6 @@
-package com.mycalendar.myCalendar.model;
+package com.mycalendar.myCalendar.model.entity;
 
+import com.mycalendar.myCalendar.model.enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "subtasks")
 public class Subtask {
 
     @Id
@@ -27,6 +29,5 @@ public class Subtask {
     // Description of the subtask
     private String description;
 
-    // Completion status of the subtask
-    private boolean completed;
+    private TaskStatus status;
 }
