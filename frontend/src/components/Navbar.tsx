@@ -2,7 +2,7 @@
 import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import LoginRegisterButton from './LoginRegisterButton';
-import { removeUser } from '../stores/user';
+import { removeUser } from '../store/user';
 
 const Navbar = () => {
   const dispatch = useDispatch();
