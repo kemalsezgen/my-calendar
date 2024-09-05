@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-interface Todo {
+export interface Todo {
   id: number;
   title: string;
   description: string;
   subtasks: Subtask[];
-  completed: boolean;
+  completed: "Not Started" | "In Progress" | "Completed";
   startDate: string;
   endDate: string;
 }
@@ -36,7 +36,7 @@ const todo = createSlice({
         if (todo.id === action.payload) {
           return {
             ...todo,
-            completed: !todo.completed
+            completed: todo.completed === "Not Started" ? "In Progress" : "Completed"
           }
         }
         return todo;
