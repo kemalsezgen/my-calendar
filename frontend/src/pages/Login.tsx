@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { setUser } from '../stores/user';
+import { setUser } from '../store/user';
 
 const Login = () => {
 

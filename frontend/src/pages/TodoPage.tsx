@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addTodo, removeTodo, toggleTodo } from '../stores/todo';
+import { addTodo, removeTodo, toggleTodo } from '../store/todo';
 
 const TodoPage = () => {
   const [todo, setTodo] = useState('');

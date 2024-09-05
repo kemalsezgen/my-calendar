@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
+import { createModal, useModals } from "../utils/modal";
 import CalendarDay from "../components/CalendarDay";
+import Modal from "../modals";
+
 
 function Calendar() {
   const [date, setDate] = useState(new Date());
 
   const MIN_YEAR = 1900;
   const MAX_YEAR = 2100;
+
+  const modals = useModals();
 
   useEffect(() => {
     setDate(new Date());
@@ -42,6 +47,10 @@ function Calendar() {
     }
   };
 
+  const openModal = () => {
+    createModal('dayDetail');
+  }
+
   const renderCalendar = () => {
     const year = date.getFullYear(); // 2024
     const month = date.getMonth(); // 0-11
@@ -64,6 +73,7 @@ function Calendar() {
           statu={`other-month-${prevMonthDays - i}`}
           day={day}
           date={dateObj}
+          onClick={openModal}
         />
       );
     }
@@ -78,6 +88,7 @@ function Calendar() {
           statu="this-month"
           day={day}
           date={dateObj}
+          onClick={openModal}
         />
       );
 
@@ -96,7 +107,11 @@ function Calendar() {
     for (let i = 1; i <= remainingCells; i++) {
       const dateObj = new Date(year, month + 1, i);
       days.push(
-        <CalendarDay key={`next-${i}`} statu={`other-month-${i}`} day={i} date={dateObj} />
+        <CalendarDay
+          key={`next-${i}`}
+          statu={`other-month-${i}`}
+          day={i} date={dateObj}
+          onClick={openModal} />
       );
 
       if (days.length === 7) {
@@ -139,6 +154,7 @@ function Calendar() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
+      {modals.length > 0 && <Modal />}
       <div className="flex-grow flex items-center justify-center flex-col">
         <div className="mx-auto border border-gray-300 shadow-lg rounded-lg w-11/12">
           <div className="flex justify-between items-center bg-gray-100 p-2 border-b border-gray-300">
