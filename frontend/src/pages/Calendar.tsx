@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { createModal, useModals } from "../utils/modal";
+import { useDispatch } from "react-redux";
 import CalendarDay from "../components/CalendarDay";
-import Modal from "../modals";
-
+import DayDetailModal from "../modals/DayDetailModal";
+import { setDate } from "../store/dayDetail";
 
 function Calendar() {
-  const [date, setDate] = useState(new Date());
+  const dispatch = useDispatch();
+  const [date, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const MIN_YEAR = 1900;
   const MAX_YEAR = 2100;
-
-  const modals = useModals();
 
   useEffect(() => {
     setDate(new Date());
@@ -47,10 +48,6 @@ function Calendar() {
     }
   };
 
-  const openModal = () => {
-    createModal('dayDetail');
-  }
-
   const renderCalendar = () => {
     const year = date.getFullYear(); // 2024
     const month = date.getMonth(); // 0-11
@@ -73,7 +70,7 @@ function Calendar() {
           statu={`other-month-${prevMonthDays - i}`}
           day={day}
           date={dateObj}
-          onClick={openModal}
+          onClick={() => console.log("clicked")}
         />
       );
     }
@@ -88,7 +85,11 @@ function Calendar() {
           statu="this-month"
           day={day}
           date={dateObj}
-          onClick={openModal}
+          onClick={() => {
+            dispatch(setDate(dateObj.toISOString()));
+            setSelectedDate(dateObj);
+            setIsModalOpen(true);
+          }}
         />
       );
 
@@ -110,13 +111,18 @@ function Calendar() {
         <CalendarDay
           key={`next-${i}`}
           statu={`other-month-${i}`}
-          day={i} date={dateObj}
-          onClick={openModal} />
+          day={i}
+          date={dateObj}
+          onClick={() => console.log("clicked")}
+        />
       );
 
       if (days.length === 7) {
         weeks.push(
-          <div key={`next-week-${i}`} className="calendar-week grid grid-cols-7">
+          <div
+            key={`next-week-${i}`}
+            className="calendar-week grid grid-cols-7"
+          >
             {days}
           </div>
         );
@@ -154,7 +160,6 @@ function Calendar() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)]">
-      {modals.length > 0 && <Modal />}
       <div className="flex-grow flex items-center justify-center flex-col">
         <div className="mx-auto border border-gray-300 shadow-lg rounded-lg w-11/12">
           <div className="flex justify-between items-center bg-gray-100 p-2 border-b border-gray-300">
@@ -177,7 +182,10 @@ function Calendar() {
           <div className="calendar-body">
             <div className="grid grid-cols-7">
               {weekDays.map((day) => (
-                <div key={day} className="calendar-weekday flex items-center justify-center h-8 font-semibold text-gray-700 border-b border-b-300">
+                <div
+                  key={day}
+                  className="calendar-weekday flex items-center justify-center h-8 font-semibold text-gray-700 border-b border-b-300"
+                >
                   {day}
                 </div>
               ))}
@@ -186,6 +194,13 @@ function Calendar() {
           </div>
         </div>
       </div>
+      {selectedDate && (
+        <DayDetailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          date={selectedDate}
+        />
+      )}
     </div>
   );
 }
