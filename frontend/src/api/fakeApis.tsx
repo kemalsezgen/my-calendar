@@ -29,6 +29,14 @@ interface Note {
   date: string;
 }
 
+export interface Memory {
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+}
+
+// IDayDetail interface'ini güncelleyelim
 export interface IDayDetail {
   id: number;
   date: string;
@@ -36,6 +44,7 @@ export interface IDayDetail {
   tasks: Todo[];
   specialDays: SpecialDay[];
   notes: Note[];
+  memories: Memory[];
 }
 
 const formatDate = (date: string): string => {
@@ -115,7 +124,7 @@ const getTodos = async (date: string): Promise<Todo[]> => {
 
   const targetDate = new Date(date).toLocaleDateString().split(" ")[0];
 
-  return todos.filter(todo => {
+  return todos.filter((todo) => {
     const startDate = formatDate(todo.startDate);
     const endDate = formatDate(todo.endDate);
     return targetDate >= startDate && targetDate <= endDate;
@@ -139,7 +148,7 @@ const getSpecialDays = async (date: string): Promise<SpecialDay[]> => {
   const targetDate = new Date(date).toLocaleString().split(" ")[0];
   console.log("targetDate:", targetDate);
 
-  return specialDays.filter(specialDay => {
+  return specialDays.filter((specialDay) => {
     const specialDayDate = formatDate(specialDay.date);
     console.log("specialDayDate:", specialDayDate);
     return targetDate === specialDayDate;
@@ -164,28 +173,30 @@ const getNotes = async (date: string): Promise<Note[]> => {
 
   const targetDate = new Date(date).toLocaleString().split(" ")[0];
 
-  return notes.filter(note => {
+  return notes.filter((note) => {
     const noteDate = formatDate(note.date);
     return targetDate === noteDate;
   });
 };
 
+export const getMemories = async (date: string): Promise<Memory[]> => {
+  const memories: Memory[] = [
+    { id: 1, title: "First Memory", content: "This is my first memory", date: "2024-09-09" },
+    { id: 2, title: "Second Memory", content: "This is my second memory", date: "2024-09-09" },
+  ];
+
+  return memories.filter(memory => memory.date === date);
+};
+
 // getDayDetail method
 export const getDayDetail = async (date: string): Promise<IDayDetail> => {
-
-  const getDay = (date: string): string => {
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dayIndex = new Date(date).getDay();
-    return days[dayIndex];
-  }
-
   return {
-    // generate a random number between 1 and 1000
-    id: Math.floor(Math.random() * 1000) + 1,
+    id: 1,
     date: date,
-    day: getDay(date),
+    day: new Date(date).toLocaleDateString("en-US", { weekday: "long" }),
     tasks: await getTodos(date),
     specialDays: await getSpecialDays(date),
     notes: await getNotes(date),
+    memories: await getMemories(date),
   };
-}
+};
