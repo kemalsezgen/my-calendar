@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -15,22 +15,39 @@ interface AddMemoryModalProps {
 
 const AddMemoryModal: React.FC<AddMemoryModalProps> = ({ isOpen, onClose, date }) => {
   const dispatch = useDispatch();
-  const [newMemory, setNewMemory] = useState({ title: '', content: '' });
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [memoryDate, setMemoryDate] = useState('');
+
+  useEffect(() => {
+    if (date) {
+      const formattedDate = date.toISOString().split('T')[0];
+      setMemoryDate(formattedDate);
+    }
+  }, [date]);
 
   const handleAddMemory = () => {
-    if (!newMemory.title.trim() || !newMemory.content.trim()) {
-      showToast('Title or content cannot be empty', 'error');
+    if (!title.trim() || !content.trim()) {
+      showToast('Title and content are required.', 'error');
       return;
     }
 
-    const memory = {
+    if (title.length > 50) {
+      showToast('Title must be less than 50 characters.', 'error');
+      return;
+    }
+
+    const newMemory = {
       id: Date.now(),
-      ...newMemory,
-      date: date.toLocaleDateString('en-CA'),
+      title,
+      content,
+      date: memoryDate,
     };
-    dispatch(addMemory(memory));
+
+    dispatch(addMemory(newMemory));
     onClose();
-    setNewMemory({ title: '', content: '' });
+    setTitle('');
+    setContent('');
     showToast('Memory added successfully.', 'success');
   };
 
@@ -43,23 +60,23 @@ const AddMemoryModal: React.FC<AddMemoryModalProps> = ({ isOpen, onClose, date }
         <div className="grid gap-4 py-4">
           <Input
             placeholder="Title"
-            value={newMemory.title}
-            onChange={(e) => setNewMemory({ ...newMemory, title: e.target.value })}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <Textarea
             placeholder="Content"
-            value={newMemory.content}
-            onChange={(e) => setNewMemory({ ...newMemory, content: e.target.value })}
-            className="min-h-[200px]"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[300px]"
           />
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleAddMemory}>Save Memory</Button>
+          <Button onClick={handleAddMemory}>Add Memory</Button>
         </div>
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default AddMemoryModal;

@@ -146,11 +146,9 @@ const getSpecialDays = async (date: string): Promise<SpecialDay[]> => {
   ];
 
   const targetDate = new Date(date).toLocaleString().split(" ")[0];
-  console.log("targetDate:", targetDate);
 
   return specialDays.filter((specialDay) => {
     const specialDayDate = formatDate(specialDay.date);
-    console.log("specialDayDate:", specialDayDate);
     return targetDate === specialDayDate;
   });
 };

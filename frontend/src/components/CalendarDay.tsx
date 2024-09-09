@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { setDate } from "../store/dayDetail";
+import { Memory } from "../store/memory";
 
 interface CalendarDayProps {
   day: number;
   statu: string;
   date: Date;
-  onClick?: () => void;
+  memories: Memory[];
+  onClick?: (date: Date) => void;
 }
 
-function CalendarDay({ day, statu, date, onClick }: CalendarDayProps) {
-
+function CalendarDay({ day, statu, date, memories, onClick }: CalendarDayProps) {
   const [isToday, setIsToday] = useState(false);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const today = new Date();
@@ -23,22 +21,33 @@ function CalendarDay({ day, statu, date, onClick }: CalendarDayProps) {
     );
   }, [date]);
 
-  const handleClick = () => {
-    dispatch(setDate(date.toISOString()));
-    if (onClick) onClick();
+  const getMemoriesForDate = () => {
+    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    const formattedDate = localDate.toISOString().split('T')[0];
+    return memories.filter((memory: Memory) => memory.date === formattedDate);
   };
+
+  const dayMemories = getMemoriesForDate();
 
   return (
     <div
-      key={statu}
-      className={`calendar-day flex p-2 justify-end h-[100px] border border-gray-300 cursor-pointer
-         hover:bg-gray-100
+      className={`calendar-day flex flex-col p-2 justify-between h-[100px] border border-gray-300 cursor-pointer
+        hover:bg-gray-100
         ${statu.includes("other") ? `text-gray-400` : ""}
         ${isToday && statu.includes("this") ? `bg-cream` : ""}
-        `}
-      onClick={handleClick}
+      `}
+      onClick={() => onClick && onClick(date)}
     >
-      {day}
+      <div className="self-end">{day}</div>
+      {dayMemories.length > 0 && (
+        <div className="memory-indicator text-xs">
+          {dayMemories.length <= 2
+            ? dayMemories.map((memory, index) => (
+                <div key={index} className="truncate">{memory.title}</div>
+              ))
+            : `${dayMemories.length} memories`}
+        </div>
+      )}
     </div>
   );
 }
