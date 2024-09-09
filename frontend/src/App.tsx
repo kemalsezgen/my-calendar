@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Calendar from "./pages/Calendar";
-import { fetchMemories } from "./store/memory";
+import { fetchAllMemories } from "./store/memory";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -19,11 +19,7 @@ const App = () => {
     if (user) {
       dispatch(setUser(JSON.parse(user)));
     }
-  }, []);
-
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    dispatch(fetchMemories(today) as any);
+    dispatch(fetchAllMemories() as any);
   }, [dispatch]);
 
   return (

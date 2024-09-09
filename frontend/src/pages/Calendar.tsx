@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CalendarDay from "../components/CalendarDay";
 import DayDetailModal from "../modals/DayDetailModal";
 import { setDate } from "../store/dayDetail";
+import { fetchAllMemories } from "../store/memory";
+import { RootState } from "../store";
 
 function Calendar() {
   const dispatch = useDispatch();
   const [date, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const memories = useSelector((state: RootState) => state.memory.memories);
 
   const MIN_YEAR = 1900;
   const MAX_YEAR = 2100;
 
   useEffect(() => {
-    setDate(new Date());
-  }, []);
+    dispatch(fetchAllMemories() as any);
+  }, [dispatch]);
 
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -30,10 +33,10 @@ function Calendar() {
     const prevMonth = date.getMonth() - 1;
     if (prevMonth < 0) {
       if (date.getFullYear() > MIN_YEAR) {
-        setDate(new Date(date.getFullYear() - 1, 11, 1));
+        setCurrentDate(new Date(date.getFullYear() - 1, 11, 1));
       }
     } else {
-      setDate(new Date(date.getFullYear(), prevMonth, 1));
+      setCurrentDate(new Date(date.getFullYear(), prevMonth, 1));
     }
   };
 
@@ -41,18 +44,25 @@ function Calendar() {
     const nextMonth = date.getMonth() + 1;
     if (nextMonth > 11) {
       if (date.getFullYear() < MAX_YEAR) {
-        setDate(new Date(date.getFullYear() + 1, 0, 1));
+        setCurrentDate(new Date(date.getFullYear() + 1, 0, 1));
       }
     } else {
-      setDate(new Date(date.getFullYear(), nextMonth, 1));
+      setCurrentDate(new Date(date.getFullYear(), nextMonth, 1));
     }
   };
 
+  const handleDateClick = (clickedDate: Date) => {
+    const localDate = new Date(clickedDate.getTime() - clickedDate.getTimezoneOffset() * 60000);
+    setSelectedDate(localDate);
+    dispatch(setDate(localDate.toISOString()));
+    setIsModalOpen(true);
+  };
+
   const renderCalendar = () => {
-    const year = date.getFullYear(); // 2024
-    const month = date.getMonth(); // 0-11
+    const year = date.getFullYear();
+    const month = date.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
-    const firstDayOfMonth = getFirstDayOfMonth(year, month); // 0-6
+    const firstDayOfMonth = getFirstDayOfMonth(year, month);
 
     const weeks = [];
     let days = [];
@@ -70,7 +80,8 @@ function Calendar() {
           statu={`other-month-${prevMonthDays - i}`}
           day={day}
           date={dateObj}
-          onClick={() => console.log("clicked")}
+          onClick={() => handleDateClick(dateObj)}
+          memories={memories}
         />
       );
     }
@@ -78,18 +89,14 @@ function Calendar() {
     // Bu ayın günlerini ekle
     for (let day = 1; day <= daysInMonth; day++) {
       const dateObj = new Date(year, month, day);
-
       days.push(
         <CalendarDay
           key={`current-${day}`}
           statu="this-month"
           day={day}
           date={dateObj}
-          onClick={() => {
-            dispatch(setDate(dateObj.toISOString()));
-            setSelectedDate(dateObj);
-            setIsModalOpen(true);
-          }}
+          memories={memories}
+          onClick={() => handleDateClick(dateObj)}
         />
       );
 
@@ -113,7 +120,12 @@ function Calendar() {
           statu={`other-month-${i}`}
           day={i}
           date={dateObj}
-          onClick={() => console.log("clicked")}
+          memories={memories}
+          onClick={() => {
+            dispatch(setDate(dateObj.toISOString()));
+            setSelectedDate(dateObj);
+            setIsModalOpen(true);
+          }}
         />
       );
 

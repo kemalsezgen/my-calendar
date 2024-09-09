@@ -27,6 +27,11 @@ const EditMemoryModal: React.FC<EditMemoryModalProps> = ({ isOpen, onClose, memo
       return;
     }
 
+    if (editedMemory && editedMemory.title.length > 150) {
+      showToast('Title must be less than 50 characters.', 'error');
+      return;
+    }
+
     if (editedMemory) {
       dispatch(updateMemory(editedMemory));
       onClose();
@@ -52,7 +57,7 @@ const EditMemoryModal: React.FC<EditMemoryModalProps> = ({ isOpen, onClose, memo
             placeholder="Content"
             value={editedMemory.content}
             onChange={(e) => setEditedMemory({ ...editedMemory, content: e.target.value })}
-            className="min-h-[200px]"
+            className="min-h-[300px]"
           />
         </div>
         <div className="flex justify-end gap-2">
