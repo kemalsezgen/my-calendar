@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/user";
@@ -9,10 +9,13 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Calendar from "./pages/Calendar";
+import Memories from "./pages/Memories";
 import { fetchAllMemories } from "./store/memory";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -20,7 +23,12 @@ const App = () => {
       dispatch(setUser(JSON.parse(user)));
     }
     dispatch(fetchAllMemories() as any);
+    setIsLoading(false);
   }, [dispatch]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Router>
@@ -28,15 +36,32 @@ const App = () => {
         <Navbar />
         <div className="flex-grow">
           <Routes>
-            <Route path="/" element={<Homepage />} />
-            <Route path="/todo" element={<TodoPage />} />
-            <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Homepage />
+              </ProtectedRoute>
+            } />
+            <Route path="/todo" element={
+              <ProtectedRoute>
+                <TodoPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/calendar" element={
+              <ProtectedRoute>
+                <Calendar />
+              </ProtectedRoute>
+            } />
+            <Route path="/memories" element={
+              <ProtectedRoute>
+                <Memories />
+              </ProtectedRoute>
+            } />
           </Routes>
         </div>
       </div>
-    </Router>
+    </Router >
   );
 };
 

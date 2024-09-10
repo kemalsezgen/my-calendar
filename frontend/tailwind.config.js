@@ -58,7 +58,12 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+			utilities: {
+				'.overflow-wrap-anywhere': {
+					'overflow-wrap': 'anywhere',
+				},
+			},
   	},
   	plugins: []
   },

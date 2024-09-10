@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import AddMemoryModal from "./AddMemoryModal";
 import EditMemoryModal from "./EditMemoryModal";
 import { showToast } from '../utils/toast';
+import MemoryDetailModal from "./MemoryDetailModal";
 
 interface DayDetailModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const [isAddMemoryModalOpen, setIsAddMemoryModalOpen] = useState(false);
   const [isEditMemoryModalOpen, setIsEditMemoryModalOpen] = useState(false);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const filteredMemories = useMemo(() => {
     const selectedDateString = date.toISOString().split('T')[0];
@@ -39,6 +41,11 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const handleEditMemory = (memory: Memory) => {
     setSelectedMemory(memory);
     setIsEditMemoryModalOpen(true);
+  };
+
+  const handleOpenDetailModal = (memory: Memory) => {
+    setSelectedMemory(memory);
+    setIsDetailModalOpen(true);
   };
 
   const formatDate = (date: Date) => {
@@ -58,7 +65,7 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
           <div className="bg-gray-100 p-4 text-xl font-semibold">
             {formatDate(date)}
           </div>
-          <div className="flex flex-1 p-4 overflow-hidden">
+          <div className="flex flex-1 p-4 overflow-hidden break-words">
             <div className="w-1/2 pr-4 border-r flex flex-col h-full">
               {filteredMemories.length > 0 ? (
                 <>
@@ -69,10 +76,17 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
                         key={memory.id}
                         className="mb-4 p-4 bg-gray-100 rounded-lg"
                       >
-                        <h3 className="text-lg font-bold break-words overflow-hidden line-clamp-2">{memory.title}</h3>
-                        <p className="text-gray-600 mt-2 break-words overflow-hidden text-ellipsis line-clamp-5">
-                          {memory.content}
-                        </p>
+                        <div className="cursor-pointer" 
+                        onClick={() => handleOpenDetailModal(memory)}>
+                          <h3
+                            className="text-lg font-bold break-words overflow-hidden line-clamp-2 cursor-pointer hover:underline"
+                          >
+                            {memory.title}
+                          </h3>
+                          <p className="text-gray-600 mt-2 break-words overflow-hidden text-ellipsis line-clamp-5">
+                            {memory.content}
+                          </p>
+                        </div>
                         <div className="flex justify-end mt-2">
                           <Button
                             variant="ghost"
@@ -125,6 +139,11 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
       <EditMemoryModal
         isOpen={isEditMemoryModalOpen}
         onClose={() => setIsEditMemoryModalOpen(false)}
+        memory={selectedMemory}
+      />
+      <MemoryDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
         memory={selectedMemory}
       />
     </>

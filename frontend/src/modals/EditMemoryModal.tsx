@@ -28,7 +28,7 @@ const EditMemoryModal: React.FC<EditMemoryModalProps> = ({ isOpen, onClose, memo
     }
 
     if (editedMemory && editedMemory.title.length > 150) {
-      showToast('Title must be less than 50 characters.', 'error');
+      showToast('Title must be less than 150 characters.', 'error');
       return;
     }
 

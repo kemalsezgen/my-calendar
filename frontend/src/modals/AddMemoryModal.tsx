@@ -32,8 +32,8 @@ const AddMemoryModal: React.FC<AddMemoryModalProps> = ({ isOpen, onClose, date }
       return;
     }
 
-    if (title.length > 50) {
-      showToast('Title must be less than 50 characters.', 'error');
+    if (title.length > 150) {
+      showToast('Title must be less than 150 characters.', 'error');
       return;
     }
 
