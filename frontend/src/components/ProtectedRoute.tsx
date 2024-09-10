@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../store';
@@ -10,15 +10,18 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!user || !user.id) {
       navigate('/login');
+    } else {
+      setIsLoading(false);
     }
   }, [user, navigate]);
 
-  if (!user || !user.id) {
-    return null;
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return <>{children}</>;

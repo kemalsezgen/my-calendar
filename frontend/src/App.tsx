@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/user";
@@ -15,6 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -22,7 +23,12 @@ const App = () => {
       dispatch(setUser(JSON.parse(user)));
     }
     dispatch(fetchAllMemories() as any);
+    setIsLoading(false);
   }, [dispatch]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Router>
