@@ -18,7 +18,7 @@ const Homepage = () => {
   }, [user, navigate]);
 
   const handleTaskClick = () => {
-    navigate('/todo');
+    navigate('/tasks');
   };
 
   const handleCalendarClick = () => {
