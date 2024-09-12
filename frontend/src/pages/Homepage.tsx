@@ -31,7 +31,7 @@ const Homepage = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center h-[calc(100vh-64px)] gap-12">
+      <div className="flex justify-center items-center h-[calc(100dvh-80px)] gap-12">
         <div onClick={handleCalendarClick}
           className='flex flex-col text-center gap-2'>
           <p>Calendar</p>

@@ -1,8 +1,6 @@
 export interface Subtask {
-    id: number;
-    title: string;
-    description: string;
-    status: string;
-    startDate: string;
-    endDate: string;
+  id: number;
+  title: string;
+  description: string;
+  status: "Not Started" | "In Progress" | "Completed";
 }
