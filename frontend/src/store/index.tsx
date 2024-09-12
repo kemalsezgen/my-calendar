@@ -5,7 +5,7 @@ import user from './user';
 import specialDay from "./specialDay";
 import dayDetail from "./dayDetail";
 import memory from "./memory";
-
+import task from "./task";
 const store = configureStore({
   reducer: {
     todo,
@@ -13,6 +13,7 @@ const store = configureStore({
     specialDay,
     dayDetail,
     memory,
+    task,
   }
 })
 

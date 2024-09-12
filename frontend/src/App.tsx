@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "./store/user";
 
 import Homepage from "./pages/Homepage";
-import TodoPage from "./pages/TodoPage";
+import TasksPage from "./pages/TasksPage";
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -43,9 +43,9 @@ const App = () => {
                 <Homepage />
               </ProtectedRoute>
             } />
-            <Route path="/todo" element={
+            <Route path="/tasks" element={
               <ProtectedRoute>
-                <TodoPage />
+                <TasksPage />
               </ProtectedRoute>
             } />
             <Route path="/calendar" element={
