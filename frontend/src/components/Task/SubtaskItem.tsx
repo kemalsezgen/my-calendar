@@ -1,4 +1,3 @@
-// src/components/Task/SubtaskItem.tsx
 import React from "react";
 import { Subtask } from "@/types/Subtask";
 import { Input } from "@/components/ui/input";

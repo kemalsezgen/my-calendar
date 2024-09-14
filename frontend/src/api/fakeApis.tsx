@@ -35,8 +35,6 @@ export interface Memory {
   content: string;
   date: string;
 }
-
-// IDayDetail interface'ini güncelleyelim
 export interface IDayDetail {
   id: number;
   date: string;
@@ -186,7 +184,6 @@ export const getMemories = async (date: string): Promise<Memory[]> => {
   return memories.filter(memory => memory.date === date);
 };
 
-// getDayDetail method
 export const getDayDetail = async (date: string): Promise<IDayDetail> => {
   return {
     id: 1,

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CalendarDay from "../components/CalendarDay";
-import DayDetailModal from "../modals/DayDetailModal";
-import { setDate } from "../store/dayDetail";
-import { fetchAllMemories } from "../store/memory";
-import { RootState } from "../store";
+import CalendarDay from "@/components/CalendarDay/CalendarDay";
+import DayDetailModal from "@/modals/Calendar/DayDetailModal";
+import { setDate } from "@/store/dayDetail";
+import { fetchAllMemories } from "@/store/memory";
+import { RootState } from "@/store";
 
 function Calendar() {
   const dispatch = useDispatch();
@@ -12,6 +12,7 @@ function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const memories = useSelector((state: RootState) => state.memory.memories);
+  const tasks = useSelector((state: RootState) => state.task.tasks);
 
   const MIN_YEAR = 1900;
   const MAX_YEAR = 2100;
@@ -52,7 +53,9 @@ function Calendar() {
   };
 
   const handleDateClick = (clickedDate: Date) => {
-    const localDate = new Date(clickedDate.getTime() - clickedDate.getTimezoneOffset() * 60000);
+    const localDate = new Date(
+      clickedDate.getTime() - clickedDate.getTimezoneOffset() * 60000
+    );
     setSelectedDate(localDate);
     dispatch(setDate(localDate.toISOString()));
     setIsModalOpen(true);
@@ -67,7 +70,6 @@ function Calendar() {
     const weeks = [];
     let days = [];
 
-    // Önceki ayın günlerini ekle
     const prevMonthDays = firstDayOfMonth;
     const prevMonthLastDay = new Date(year, month, 0).getDate();
 
@@ -82,11 +84,11 @@ function Calendar() {
           date={dateObj}
           onClick={() => handleDateClick(dateObj)}
           memories={memories}
+          tasks={tasks}
         />
       );
     }
 
-    // Bu ayın günlerini ekle
     for (let day = 1; day <= daysInMonth; day++) {
       const dateObj = new Date(year, month, day);
       days.push(
@@ -96,7 +98,12 @@ function Calendar() {
           day={day}
           date={dateObj}
           memories={memories}
-          onClick={() => handleDateClick(dateObj)}
+          tasks={tasks}
+          onClick={() => {
+            dispatch(setDate(dateObj.toISOString()));
+            setSelectedDate(dateObj);
+            setIsModalOpen(true);
+          }}
         />
       );
 
@@ -110,7 +117,6 @@ function Calendar() {
       }
     }
 
-    // add remaining days of the next month
     const remainingCells = 42 - (daysInMonth + prevMonthDays);
     for (let i = 1; i <= remainingCells; i++) {
       const dateObj = new Date(year, month + 1, i);
@@ -121,6 +127,7 @@ function Calendar() {
           day={i}
           date={dateObj}
           memories={memories}
+          tasks={tasks}
           onClick={() => {
             dispatch(setDate(dateObj.toISOString()));
             setSelectedDate(dateObj);
@@ -171,7 +178,7 @@ function Calendar() {
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)]">
+    <div className="flex flex-col h-[calc(100vh-80px)]">
       <div className="flex-grow flex items-center justify-center flex-col">
         <div className="mx-auto border border-gray-300 shadow-lg rounded-lg w-11/12">
           <div className="flex justify-between items-center bg-gray-100 p-2 border-b border-gray-300">
@@ -192,16 +199,16 @@ function Calendar() {
             </button>
           </div>
           <div className="calendar-body">
-            <div className="grid grid-cols-7">
-              {weekDays.map((day) => (
-                <div
-                  key={day}
+              <div className="grid grid-cols-7">
+                {weekDays.map((day) => (
+                  <div
+                    key={day}
                   className="calendar-weekday flex items-center justify-center h-8 font-semibold text-gray-700 border-b border-b-300"
-                >
-                  {day}
-                </div>
-              ))}
-            </div>
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
             {renderCalendar()}
           </div>
         </div>

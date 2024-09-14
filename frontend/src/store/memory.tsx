@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface Memory {
-  id: number;
-  title: string;
-  content: string;
-  date: string;
-}
+import { Memory } from '../types/Memory';
 
 interface MemoryState {
   memories: Memory[];
@@ -50,13 +44,11 @@ export const fetchAllMemories = () => (dispatch: any) => {
 
 export default memorySlice.reducer;
 
-// Helper function to load memories from localStorage
 function loadMemoriesFromLocalStorage(): Memory[] {
   const storedMemories = localStorage.getItem('memories');
   return storedMemories ? JSON.parse(storedMemories) : [];
 }
 
-// Helper function to save memories to localStorage
 function saveMemoriesToLocalStorage(memories: Memory[]) {
   localStorage.setItem('memories', JSON.stringify(memories));
 }

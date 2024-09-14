@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -9,17 +9,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { addMemory } from "../../store/memory";
+import { addMemory } from "@/store/memory";
 import { showToast } from "../../utils/toast";
 import { Calendar } from "@/components/ui/calendar";
 import { format, startOfDay } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { RootState } from "@/store";
 import { cn } from "@/lib/utils";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AddMemoryModalProps {
   isOpen: boolean;
@@ -31,12 +39,21 @@ interface AddMemoryModalProps {
 const AddMemoryModal: React.FC<AddMemoryModalProps> = ({
   isOpen,
   onClose,
+  date,
   showDatePicker,
 }) => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [memoryDate, setMemoryDate] = useState<Date>();
+  const [emoji, setEmoji] = useState("");
+  const [memoryDate, setMemoryDate] = useState<Date | undefined>(date);
+  const memories = useSelector((state: RootState) => state.memory.memories);
+  const filteredMemories = useMemo(() => {
+    const selectedDateString = date
+      ? format(startOfDay(date), "yyyy-MM-dd")
+      : undefined;
+    return memories.filter((memory) => memory.date === selectedDateString);
+  }, [memories, date]);
 
   const handleAddMemory = () => {
     if (!title.trim() || !content.trim()) {
@@ -49,17 +66,31 @@ const AddMemoryModal: React.FC<AddMemoryModalProps> = ({
       return;
     }
 
+    const formattedMemoryDate = memoryDate
+      ? format(startOfDay(memoryDate), "yyyy-MM-dd")
+      : undefined;
+    console.log("formattedMemoryDate", formattedMemoryDate);
+
+    if (filteredMemories.length >= 3) {
+      showToast("You can only add 3 memories per day.", "error");
+      return;
+    }
+
     const newMemory = {
       id: Date.now(),
       title,
       content,
-      date: memoryDate ? format(startOfDay(memoryDate), 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+      date: formattedMemoryDate || format(new Date(), "yyyy-MM-dd"),
+      emoji,
     };
+
+    console.log("newMemory", newMemory);
 
     dispatch(addMemory(newMemory));
     onClose();
     setTitle("");
     setContent("");
+    setEmoji("");
     showToast("Memory added successfully.", "success");
   };
 
@@ -70,17 +101,33 @@ const AddMemoryModal: React.FC<AddMemoryModalProps> = ({
           <DialogTitle>Add New Memory</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <Input
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <Textarea
-            placeholder="Content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-[300px]"
-          />
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Title
+            </label>
+            <Input
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="content"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Content
+            </label>
+            <Textarea
+              placeholder="Content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="min-h-[300px]"
+            />
+          </div>
           {showDatePicker && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -114,6 +161,49 @@ const AddMemoryModal: React.FC<AddMemoryModalProps> = ({
               </Popover>
             </div>
           )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Emotion
+            </label>
+            <Select value={emoji} onValueChange={setEmoji}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an emotion" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="😊">😊</SelectItem>
+                <SelectItem value="😢">😢</SelectItem>
+                <SelectItem value="😡">😡</SelectItem>
+                <SelectItem value="😃">😃</SelectItem>
+                <SelectItem value="😟">😟</SelectItem>
+                <SelectItem value="😌">😌</SelectItem>
+                <SelectItem value="😩">😩</SelectItem>
+                <SelectItem value="😍">😍</SelectItem>
+                <SelectItem value="😔">😔</SelectItem>
+                <SelectItem value="😭">😭</SelectItem>
+                <SelectItem value="🌞">🌞</SelectItem>
+                <SelectItem value="🌧️">🌧️</SelectItem>
+                <SelectItem value="🌈">🌈</SelectItem>
+                <SelectItem value="🌻">🌻</SelectItem>
+                <SelectItem value="❄️">❄️</SelectItem>
+                <SelectItem value="🏃">🏃</SelectItem>
+                <SelectItem value="🎨">🎨</SelectItem>
+                <SelectItem value="📚">📚</SelectItem>
+                <SelectItem value="🍽️">🍽️</SelectItem>
+                <SelectItem value="🎮">🎮</SelectItem>
+                <SelectItem value="✈️">✈️</SelectItem>
+                <SelectItem value="🎉">🎉</SelectItem>
+                <SelectItem value="🎂">🎂</SelectItem>
+                <SelectItem value="💍">💍</SelectItem>
+                <SelectItem value="👶">👶</SelectItem>
+                <SelectItem value="💌">💌</SelectItem>
+                <SelectItem value="💻">💻</SelectItem>
+                <SelectItem value="📝">📝</SelectItem>
+                <SelectItem value="📊">📊</SelectItem>
+                <SelectItem value="🎓">🎓</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose}>

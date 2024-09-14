@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Memory } from '../../store/memory';
+import { Memory } from '@/types/Memory';
 import { format } from 'date-fns';
 
 interface MemoryDetailModalProps {
@@ -16,7 +16,9 @@ const MemoryDetailModal: React.FC<MemoryDetailModalProps> = ({ isOpen, onClose, 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] w-full max-h-[90vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-800 break-all">{memory.title}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-gray-800 break-all">
+            {memory.emoji} {memory.title}
+          </DialogTitle>
           <p className="text-sm text-gray-500">
             {format(new Date(memory.date), 'dd MMMM yyyy')}
           </p>
