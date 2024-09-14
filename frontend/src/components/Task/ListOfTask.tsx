@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store';
-import { removeTask } from '@/store/task';
-import TaskItem from './TaskItem';
-import EditTaskModal from '@/modals/Task/EditTaskModal';
-import { showToast } from '@/utils/toast';
-import { Task } from '@/types/Task';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import { removeTask } from "@/store/task";
+import TaskItem from "./TaskItem";
+import EditTaskModal from "@/modals/Task/EditTaskModal";
+import { showToast } from "@/utils/toast";
+import { Task } from "@/types/Task";
 
-const TaskList: React.FC = () => {
+interface TaskListProps {
+  taskList?: Task[];
+}
+
+const TaskList: React.FC<TaskListProps> = ({ taskList }) => {
   const dispatch = useDispatch();
-  const tasks = useSelector((state: RootState) => state.task.tasks);
+  const tasks = taskList
+    ? taskList
+    : useSelector((state: RootState) => state.task.tasks);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 

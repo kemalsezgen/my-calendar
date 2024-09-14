@@ -4,9 +4,9 @@ import { RootState } from '../store';
 import { Memory, removeMemory } from '../store/memory';
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import AddMemoryModal from "../modals/AddMemoryModal";
-import EditMemoryModal from "../modals/EditMemoryModal";
-import MemoryDetailModal from "../modals/MemoryDetailModal";
+import AddMemoryModal from "../modals/Memory/AddMemoryModal";
+import EditMemoryModal from "../modals/Memory/EditMemoryModal";
+import MemoryDetailModal from "../modals/Memory/MemoryDetailModal";
 import { showToast } from '../utils/toast';
 
 const Memories = () => {
@@ -89,6 +89,7 @@ const Memories = () => {
         isOpen={isAddMemoryModalOpen}
         onClose={() => setIsAddMemoryModalOpen(false)}
         date={new Date()}
+        showDatePicker={true}
       />
       <EditMemoryModal
         isOpen={isEditMemoryModalOpen}

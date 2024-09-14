@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Memory } from '../store/memory';
+import { Memory } from '../../store/memory';
 import { format } from 'date-fns';
 
 interface MemoryDetailModalProps {

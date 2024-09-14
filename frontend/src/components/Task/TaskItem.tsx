@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Task } from "@/types/Task";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
-
+import TaskDetailModal from "@/modals/Task/TaskDetailModal";
 interface TaskItemProps {
   task: Task;
   onEdit: (task: Task) => void;
@@ -22,13 +22,24 @@ const getStatusColor = (status: string): string => {
 };
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete }) => {
+  const [isTaskDetailModalOpen, setIsTaskDetailModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const handleOpenTaskDetailModal = (task: Task) => {
+    setSelectedTask(task);
+    setIsTaskDetailModalOpen(true);
+  };
+
   const completedSubtasks = task.subtasks.filter(
     (subtask) => subtask.status === "Completed"
   ).length;
 
   return (
     <div className="bg-gray-100 rounded-lg p-4 shadow-md flex flex-col">
-      <div className="flex flex-col h-full">
+      <div
+        className="flex flex-col h-full cursor-pointer"
+        onClick={() => handleOpenTaskDetailModal(task)}
+      >
         <div className="flex justify-between mb-2">
           <h3 className="text-lg font-bold break-words overflow-hidden line-clamp-2 w-[80%] pr-2">
             {task.title}
@@ -64,6 +75,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete }) => {
           </Button>
         </div>
       </div>
+
+      <TaskDetailModal
+        isOpen={isTaskDetailModalOpen}
+        onClose={() => setIsTaskDetailModalOpen(false)}
+        task={selectedTask}
+      />
     </div>
   );
 };
