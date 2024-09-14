@@ -1,5 +1,3 @@
-// special day store
-
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface SpecialDay {

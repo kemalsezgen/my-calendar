@@ -80,7 +80,6 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
       return;
     }
 
-    // Check if all subtasks are completed
     const allSubtasksCompleted = subtasks.every(
       (subtask) => subtask.status === "Completed"
     );

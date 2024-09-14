@@ -2,16 +2,23 @@ import React, { useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { format, startOfDay } from "date-fns";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import { RootState } from "../store";
-import { Memory, removeMemory } from "../store/memory";
+import { RootState } from "@/store";
+import { Memory } from "@/types/Memory";
+import { removeMemory } from "@/store/memory";
 import { Task } from "@/types/Task";
-import { showToast } from "../utils/toast";
-import AddMemoryModal from "./Memory/AddMemoryModal";
-import EditMemoryModal from "./Memory/EditMemoryModal";
-import MemoryDetailModal from "./Memory/MemoryDetailModal";
-import TaskDetailModal from "./Task/TaskDetailModal";
+import { showToast } from "@/utils/toast";
+import AddMemoryModal from "../Memory/AddMemoryModal";
+import EditMemoryModal from "../Memory/EditMemoryModal";
+import MemoryDetailModal from "../Memory/MemoryDetailModal";
+import TaskDetailModal from "../Task/TaskDetailModal";
 import TaskList from "@/components/Task/ListOfTask";
 import AddTaskModal from "@/modals/Task/AddTaskModal";
 
@@ -38,7 +45,7 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
   const filteredMemories = useMemo(() => {
-    const selectedDateString = date.toISOString().split("T")[0];
+    const selectedDateString = format(startOfDay(date), "yyyy-MM-dd");
     return allMemories.filter((memory) => memory.date === selectedDateString);
   }, [allMemories, date]);
 
@@ -92,9 +99,14 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
                           className="cursor-pointer"
                           onClick={() => handleOpenDetailModal(memory)}
                         >
-                          <h3 className="text-lg font-bold break-words overflow-hidden line-clamp-2 cursor-pointer hover:underline">
-                            {memory.title}
-                          </h3>
+                          <div className="flex gap-2 items-center">
+                            <p className="text-gray-600 mt-2 break-words overflow-hidden text-ellipsis line-clamp-5">
+                              {memory.emoji}
+                            </p>
+                            <h3 className="text-lg font-bold break-words overflow-hidden line-clamp-2 cursor-pointer pt-[6px]">
+                              {memory.title}
+                            </h3>
+                          </div>
                           <p className="text-gray-600 mt-2 break-words overflow-hidden text-ellipsis line-clamp-5">
                             {memory.content}
                           </p>
@@ -118,12 +130,26 @@ const DayDetailModal: React.FC<DayDetailModalProps> = ({
                       </div>
                     ))}
                   </div>
-                  <Button
-                    className="w-full bg-black text-white hover:bg-gray-800 mt-4"
-                    onClick={() => setIsAddMemoryModalOpen(true)}
-                  >
-                    Add Memory
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="w-full">
+                          <Button
+                            className="w-full bg-black text-white hover:bg-gray-800 mt-4"
+                            onClick={() => setIsAddMemoryModalOpen(true)}
+                            disabled={filteredMemories.length >= 3}
+                          >
+                            Add Memory
+                          </Button>
+                        </div>
+                      </TooltipTrigger>
+                      {filteredMemories.length >= 3 && (
+                        <TooltipContent>
+                          <p>You can add a maximum of 3 memories per day</p>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  </TooltipProvider>
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
