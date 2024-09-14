@@ -4,8 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Memory, updateMemory } from '../store/memory';
-import { showToast } from '../utils/toast';
+import { Memory, updateMemory } from '../../store/memory';
+import { showToast } from '../../utils/toast';
 
 interface EditMemoryModalProps {
   isOpen: boolean;

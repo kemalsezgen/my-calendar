@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import AddTaskModal from "../modals/Task/AddTaskModal";
-import TaskList from "../components/Task/TaskList";
+import TaskList from "../components/Task/ListOfTask";
 
 const TasksPage = () => {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
